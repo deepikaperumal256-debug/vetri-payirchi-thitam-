@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Your plan · FitBuddy{% endblock %}
+{% block content %}
+{% set parsed = current_plan | split_days %}
+<h1>{{ user.username }}’s week</h1>
+{% if message %}<div class="alert ok" role="status" style="margin-top:1.2rem">{{ message }}</div>{% endif %}
+<div class="facts">
+  <div><small>Goal</small><strong>{{ user.goal }}</strong></div>
+  <div><small>Intensity</small><strong>{{ user.intensity }}</strong></div>
+  <div><small>Age</small><strong>{{ user.age }}</strong></div>
+  <div><small>Weight</small><strong>{{ user.weight }} kg</strong></div>
+  <div><small>User ID</small><strong>{{ user.user_id }}</strong></div>
+</div>
+
+<section class="plan" aria-label="Workout plan">
+  {% if parsed.days %}
+    {% if parsed.intro %}<p>{{ parsed.intro }}</p>{% endif %}
+    {% for d in parsed.days %}
+    <div class="day{% if d.rest %} rest{% endif %}">
+      <h3>{{ d.label }}{% if d.focus %}<small>{{ d.focus }}</small>{% endif %}</h3>
+      <pre>{{ d.body }}</pre>
+    </div>
+    {% endfor %}
+  {% else %}<pre class="raw">{{ current_plan }}</pre>{% endif %}
+  {% if plan.updated_plan %}<details><summary>See your original plan</summary><pre class="raw">{{ plan.original_plan }}</pre></details>{% endif %}
+</section>
+
+<h2>Eat and recover</h2>
+<p class="tip">{{ plan.nutrition_tip }}</p>
+
+<div class="panel narrow">
+  <h2>Want to change something?</h2>
+  <form method="post" action="/submit-feedback">
+    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+    <label for="fb">Tell us what to adjust, like “more cardio” or “add a rest day”.</label>
+    <textarea id="fb" name="feedback" rows="3" required minlength="3" maxlength="500"></textarea>
+    <button type="submit">Update my plan</button>
+  </form>
+</div>
+{% endblock %}

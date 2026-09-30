@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Users · FitBuddy{% endblock %}
+{% block content %}
+<h1 style="font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:1.5rem">Users <span style="color:var(--muted)">{{ rows|length }}</span></h1>
+<div class="scroll"><table>
+  <tr><th>Name</th><th>User ID</th><th>Age</th><th>Weight</th><th>Goal</th><th>Intensity</th><th>Plans</th><th></th></tr>
+  {% for user, plan in rows %}
+  <tr>
+    <td><strong>{{ user.username }}</strong></td><td>{{ user.user_id }}</td><td>{{ user.age }}</td>
+    <td>{{ user.weight }} kg</td><td>{{ user.goal }}</td><td>{{ user.intensity }}</td>
+    <td>{% if plan %}
+      <details style="margin:0"><summary>Original plan</summary><pre class="raw">{{ plan.original_plan }}</pre></details>
+      {% if plan.updated_plan %}<details><summary>Updated plan</summary><p><em>Feedback: {{ plan.last_feedback }}</em></p><pre class="raw">{{ plan.updated_plan }}</pre></details>{% endif %}
+    {% else %}No plan yet{% endif %}</td>
+    <td><form method="post" action="/delete-user/{{ user.user_id }}{% if token %}?token={{ token }}{% endif %}" onsubmit="return confirm('Delete {{ user.username }} and their plans?')"><button class="danger">Delete</button></form></td>
+  </tr>
+  {% else %}<tr><td colspan="8">No users yet. Plans appear here once someone generates one.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

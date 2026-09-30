@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <div>
+    <h1>Seven days, built around you.</h1>
+    <p class="lede">Share your goal and how hard you want to train. Get a full week of workouts and one nutrition tip.</p>
+    <div class="week" id="week" aria-hidden="true">
+      {% for d in ['M','T','W','T','F','S','S'] %}<span><b></b>{{ d }}</span>{% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    {% if error %}<div class="alert err" role="alert">{{ error }}</div>{% endif %}
+    <form method="post" action="/generate-workout" id="plan-form">
+      <div class="row">
+        <div><label for="username">Name</label><input id="username" name="username" required maxlength="60" autocomplete="given-name"></div>
+        <div><label for="user_id">User ID</label><input id="user_id" name="user_id" required maxlength="40" placeholder="Used to reopen your plan"></div>
+      </div>
+      <div class="row">
+        <div><label for="age">Age</label><input id="age" type="number" name="age" min="10" max="100" required></div>
+        <div><label for="weight">Weight (kg)</label><input id="weight" type="number" step="0.1" name="weight" min="20" max="400" required></div>
+      </div>
+      <label for="goal">Goal</label>
+      <select id="goal" name="goal"><option>weight loss</option><option>muscle gain</option><option>general wellness</option><option>flexibility</option><option>endurance</option></select>
+      <label for="intensity">Intensity</label>
+      <select id="intensity" name="intensity"><option value="low">Low: 3 training days</option><option value="medium" selected>Medium: 4 training days</option><option value="high">High: 6 training days</option></select>
+      <button type="submit" id="go">Build my plan</button>
+    </form>
+  </div>
+</div>
+<script>
+  // Preview only: the real plan comes from the AI.
+  const shapes={low:[45,0,50,0,45,0,0],medium:[60,45,0,65,50,35,0],high:[70,60,75,55,80,45,0]};
+  const bars=[...document.querySelectorAll('#week span')];
+  const sel=document.getElementById('intensity');
+  function draw(){shapes[sel.value].forEach((h,i)=>{bars[i].classList.toggle('off',!h);bars[i].firstChild.style.setProperty('--h',(h||8)+'%')})}
+  sel.addEventListener('change',draw);draw();
+  document.getElementById('plan-form').addEventListener('submit',()=>{const b=document.getElementById('go');b.textContent='Building your week…';setTimeout(()=>b.disabled=true,0)});
+</script>
+{% endblock %}

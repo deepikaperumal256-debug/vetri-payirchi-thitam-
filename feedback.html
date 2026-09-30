@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Update your plan · FitBuddy{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:1.5rem">Adjust your plan</h1>
+  <div class="panel">
+    {% if error %}<div class="alert err" role="alert">{{ error }}</div>{% endif %}
+    <form method="post" action="/submit-feedback">
+      <label for="user_id">User ID</label><input id="user_id" name="user_id" value="{{ user_id }}" required>
+      <label for="fb">What should change?</label>
+      <textarea id="fb" name="feedback" rows="4" required minlength="3" maxlength="500" placeholder="Include more cardio and a yoga session"></textarea>
+      <button type="submit">Update my plan</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
